@@ -1,0 +1,9 @@
+  - type: web
+    name: frontend
+    env: static
+    plan: free
+    buildCommand: 'npm install && npm run build'
+    staticPublishPath: 'build'
+    envVars:
+      - key: REACT_APP_API_BASE_URL
+        value: 'https://task-0i8m.onrender.com' # The URL of your backend service on Render
