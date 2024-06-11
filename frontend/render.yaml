@@ -1,0 +1,4 @@
+services:
+  - name: client
+    buildCommand: npm run build
+    startCommand: npm run preview
