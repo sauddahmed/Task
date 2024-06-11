@@ -6,44 +6,44 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 // Load environment variables from .env file
-dotenv.config(); // This will look for a .env file in the root of your project
+const result = dotenv.config({ path: "./file.env" });
+if (result.error) {
+  throw result.error;
+}
 
-console.log(process.env); // Debugging line to check loaded environment variables
+console.log(result.parsed); // Debugging line to check loaded environment variables
 
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 
 app.use(express.json());
-app.use(cors());
+
+// Allow requests from specific frontend domain and specify allowed methods
+app.use(
+  cors({
+    origin: "https://taskfrontend-alpha.vercel.app/", // Replace with your frontend domain
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 const mongoUrl = process.env.MONGODB_URL;
-if (!mongoUrl) {
-  console.error("MongoDB URL is not defined");
-  process.exit(1);
-}
+console.log("MongoDB URL:", mongoUrl); // Debugging line to check if the URL is read correctly
 
 mongoose
   .connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Mongodb connected..."))
-  .catch((err) => {
-    console.error("Mongodb connection error:", err);
-    process.exit(1);
-  });
+  .catch((err) => console.error("Mongodb connection error:", err));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/profile", profileRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.resolve(__dirname, "../frontend/public")));
+  app.use(express.static(path.resolve(__dirname, "../frontend/build")));
   app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "../frontend/public/index.html"))
+    res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"))
   );
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running...");
-  });
 }
 
 const port = process.env.PORT || 5000;
