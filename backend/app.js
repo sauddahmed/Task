@@ -18,14 +18,7 @@ const taskRoutes = require("./routes/taskRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 
 app.use(express.json());
-
-// Allow requests from specific frontend domain and specify allowed methods
-app.use(
-  cors({
-    origin: "https://task-frontend-ahzg.onrender.com", // Replace with your frontend domain
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+app.use(cors());
 
 const mongoUrl = process.env.MONGODB_URL;
 console.log("MongoDB URL:", mongoUrl); // Debugging line to check if the URL is read correctly
@@ -40,12 +33,13 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/profile", profileRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.resolve(__dirname, "../frontend/public")));
+  app.use(express.static(path.resolve(__dirname, "../frontend/build")));
   app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "../frontend/public/index.html"))
+    res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"))
   );
 }
 
+// Use the PORT environment variable provided by Render
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Backend is running on port ${port}`);
