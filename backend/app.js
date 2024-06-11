@@ -22,7 +22,7 @@ app.use(express.json());
 // Allow requests from specific frontend domain and specify allowed methods
 app.use(
   cors({
-    origin: "https://taskfrontend-alpha.vercel.app/", // Replace with your frontend domain
+    origin: "https://task-frontend-ahzg.onrender.com", // Replace with your frontend domain
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
